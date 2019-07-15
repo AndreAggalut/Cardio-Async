@@ -2,7 +2,12 @@ const fs = require('fs').promises;
 /*
 All of your functions must return a promise!
 */
-
+/*
+Create another function of append since we going to use it a lot 
+*/
+function log(value) {
+  return fs.appendFile('./log.txt', `${value} ${Date.now()}\n`);
+}
 /* 
 Every function should be logged with a timestamp.
 If the function logs data, then put that data into the log
@@ -21,8 +26,50 @@ Errors should also be logged (preferably in a human-readable format)
  * @param {string} file
  * @param {string} key
  */
-function get(file, key) {}
+// function get(file, key) {
+//   //The promises way....
+//   // 1. Read the file
+//   const readPromise = fs.readFile(file, 'utf-8');
+//   // 2. handle the promise -->
+//   // .then() always accept callback function()
+//   return readPromise
+//     .then(data => {
+//       console.log(data);
+//       // 3. Parse the data from string to JSON.
+//       const parsed = JSON.parse(data);
+//       console.log(parsed);
+//       // 4. Use the key to get the  value at object[key]
+//       // {
+//       //   "firstname": "Andrew",
+//       //   "lastname": "Maney",
+//       //   "email": "amaney@talentpath.com"
+//       // }
+//       const value = parsed[key];
+//       if (!value) return log(`ERROR ${key} invalid key on ${file}`);
+//       console.log(value);
+//       // 5. append the log file with that above value
+//       // you wanna make sure you want to return these promises.
+//       return log(value);
+//     })
+//     .catch(err => log(`ERROR no such file or directory ${file}`));
+// }
 
+// ASYNC WAY
+async function get(file, key) {
+  try {
+    // 1.read file
+    // 2.handle async data
+    const data = await fs.readFile(file, 'utf8');
+    // 3. parse data from string --> JSON
+    const parsed = JSON.parse(data);
+    // 4. use the key to get the value at object[key]
+    const value = parsed[key];
+    // 5. append the log file with the value
+    return log(value);
+  } catch (err) {
+    log(`ERROR no such file or directory ${file}`);
+  }
+}
 /**
  * Sets the value of object[key] and rewrites object to file
  * @param {string} file
